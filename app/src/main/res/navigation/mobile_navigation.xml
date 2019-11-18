@@ -3,23 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_catalog">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.ams303.cityconnect.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_catalog"
+        android:name="com.ams303.cityconnect.ui.catalog.CatalogFragment"
+        android:label="@string/title_catalog"
+        tools:layout="@layout/fragment_cart" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.ams303.cityconnect.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_cart"
+        android:name="com.ams303.cityconnect.ui.cart.CartFragment"
+        android:label="@string/title_cart"
+        tools:layout="@layout/fragment_catalog" />
+
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.ams303.cityconnect.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_deliveries"
+        android:name="com.ams303.cityconnect.ui.deliveries.DeliveriesFragment"
+        android:label="@string/title_deliveries"
+        tools:layout="@layout/fragment_deliveries" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.ams303.cityconnect.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

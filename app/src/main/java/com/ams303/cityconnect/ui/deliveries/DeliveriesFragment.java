@@ -1,4 +1,4 @@
-package com.ams303.cityconnect.ui.dashboard;
+package com.ams303.cityconnect.ui.deliveries;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.ams303.cityconnect.R;
 
-public class DashboardFragment extends Fragment {
+public class DeliveriesFragment extends Fragment {
 
-    private DashboardViewModel dashboardViewModel;
+    private DeliveriesViewModel deliveriesViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                ViewModelProviders.of(this).get(DashboardViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(this, new Observer<String>() {
+        deliveriesViewModel =
+                ViewModelProviders.of(this).get(DeliveriesViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_deliveries, container, false);
+        final TextView textView = root.findViewById(R.id.text_notifications);
+        deliveriesViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

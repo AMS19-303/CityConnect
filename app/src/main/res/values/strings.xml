@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">CityConnect</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_catalog">Catálogo</string>
+    <string name="title_cart">Carrinho</string>
+    <string name="title_deliveries">Encomendas</string>
+    <string name="title_profile">Perfil</string>
 </resources>

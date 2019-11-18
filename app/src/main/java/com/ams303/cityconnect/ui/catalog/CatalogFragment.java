@@ -1,4 +1,4 @@
-package com.ams303.cityconnect.ui.notifications;
+package com.ams303.cityconnect.ui.catalog;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.ams303.cityconnect.R;
 
-public class NotificationsFragment extends Fragment {
+public class CatalogFragment extends Fragment {
 
-    private NotificationsViewModel notificationsViewModel;
+    private CatalogViewModel catalogViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        notificationsViewModel =
-                ViewModelProviders.of(this).get(NotificationsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_notifications, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-        notificationsViewModel.getText().observe(this, new Observer<String>() {
+        catalogViewModel =
+                ViewModelProviders.of(this).get(CatalogViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_catalog, container, false);
+        final TextView textView = root.findViewById(R.id.text_home);
+        catalogViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
