@@ -16,20 +16,11 @@ import com.ams303.cityconnect.R;
 
 public class DeliveriesFragment extends Fragment {
 
-    private DeliveriesViewModel deliveriesViewModel;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        deliveriesViewModel =
-                ViewModelProviders.of(this).get(DeliveriesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_deliveries, container, false);
         final TextView textView = root.findViewById(R.id.text_notifications);
-        deliveriesViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        textView.setText("This is deliveries fragment");
         return root;
     }
 }
