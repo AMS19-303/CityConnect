@@ -92,12 +92,12 @@
             android:id="@+id/mapView"
             android:layout_width="410dp"
             android:layout_height="180dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/categories"
             mapbox:mapbox_cameraTargetLat="40.6405"
             mapbox:mapbox_cameraTargetLng="-8.6538"
             mapbox:mapbox_cameraZoom="14" />
@@ -107,7 +107,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="27dp"
             android:text="Catálogo"
             android:textColor="@android:color/black"
             android:textSize="20sp"
@@ -119,7 +119,7 @@
             android:id="@+id/timetable_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:text="Horário"
             app:chipIcon="@drawable/time_96"
@@ -130,15 +130,25 @@
             android:id="@+id/map_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:checkable="true"
-            app:chipBackgroundColor="@color/bg_chip_state_list"
             android:text="Mapa"
             app:checkedIconVisible="false"
+            app:chipBackgroundColor="@color/bg_chip_state_list"
             app:chipIcon="@drawable/map_96"
             app:layout_constraintEnd_toStartOf="@+id/timetable_chip"
             app:layout_constraintTop_toBottomOf="@+id/mapView" />
+
+        <TextView
+            android:id="@+id/categories"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

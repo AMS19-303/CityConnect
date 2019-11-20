@@ -5,4 +5,5 @@
     <string name="title_deliveries">Encomendas</string>
     <string name="title_profile">Perfil</string>
     <string name="mapbox_access_token">pk.eyJ1Ijoicm9kcmlnb3Jvc21hbmluaG8iLCJhIjoiY2l5dzBma3J5MDBnOTJ3cWhzc3BvcmttaSJ9.5vjwohHSYhqysTL0VH2ewQ</string>
+    <string name="api_url">cityconnect.ddns.net/api</string>
 </resources>

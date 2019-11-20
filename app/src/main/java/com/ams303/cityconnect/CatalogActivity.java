@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.ams303.cityconnect.data.Store;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -20,6 +21,10 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.squareup.picasso.Picasso;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
 
@@ -45,6 +50,20 @@ public class CatalogActivity extends AppCompatActivity {
                 .centerCrop()
                 .fit()
                 .into(store_image);
+
+
+        List<String> categories_lst = Arrays.asList(store.getCategories());
+        Collections.sort(categories_lst);
+
+        TextView categories = findViewById(R.id.categories);
+        StringBuilder sb = new StringBuilder();
+        for(int j = 0; j < categories_lst.size(); j++) {
+            sb.append(categories_lst.get(j));
+            if (j != categories_lst.size() - 1){
+                sb.append(", ");
+            }
+        }
+        categories.setText(sb.toString());
 
         final MapView mapView = findViewById(R.id.mapView);
 

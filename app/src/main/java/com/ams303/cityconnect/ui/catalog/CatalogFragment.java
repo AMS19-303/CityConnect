@@ -18,15 +18,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ams303.cityconnect.CatalogActivity;
-import com.ams303.cityconnect.MainActivity;
 import com.ams303.cityconnect.R;
+import com.ams303.cityconnect.data.Category;
 import com.ams303.cityconnect.data.Store;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CatalogFragment extends Fragment {
@@ -52,10 +55,26 @@ public class CatalogFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
 
-        String list = "[{id:0, name:'Oita', type:'Croissanteria', photo:'https://i.ibb.co/vk3VfWb/oita.png', gps:[40.6387554, -8.6521355], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos', 'Doçes & Pastéis', 'Peixe']},{id=1, name:'Ramona', type:'Hamburgueria', photo:'https://i.ibb.co/WNCvCQz/ramona.jpg', gps:[40.6381073, -8.6513571], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:2, name:'Ria Pão', type:'Padaria', photo:'https://i.ibb.co/RcYc5M5/riapao.png', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:3, name:'Tripas da Praça', type:'Confeitaria', photo:'https://i.ibb.co/HnTG92V/tripaspra-a.jpg', gps:[40.6422777, -8.6548049], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:4, name:'Mini Mercado Farol', type:'Mercearia', photo:'https://i.ibb.co/L55cWtz/mercearia.jpg', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:5, name:'Azuleto', type:'Sapataria', photo:'https://i.ibb.co/GQK1bG0/sapataria.jpg', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:6, name:'Flor de Aveiro', type:'Talho', photo:'https://i.ibb.co/wK3jcZB/talho.jpg', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:7, name:'Mar Aberto', type:'Peixaria', photo:'https://i.ibb.co/bXMmrpM/peixaria.png', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}]";
+        String categories = "[{id:0, name:'Doçes & Pastéis', food: true}, {id:1, name:'Latícinios', food:true}, {id:2, name:'Fruta & Legumes', food:true}, {id:3, name:'Carne & Enchidos', food:true}, {id:4, name:'Peixe', food:true}, {id:5, name:'Indumentária', food:false}, {id:6, name:'Artesanato', food:false}, {id:7, name:'Outros', food:false}]";
+        String list = "[{id:0, name:'Oita', type:'Croissanteria', photo:'https://i.ibb.co/vk3VfWb/oita.png', gps:[40.6430422, -8.6495785], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id=1, name:'Ramona', type:'Hamburgueria', photo:'https://i.ibb.co/WNCvCQz/ramona.jpg', gps:[40.6381073, -8.6513571], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:2, name:'Ria Pão', type:'Padaria', photo:'https://i.ibb.co/RcYc5M5/riapao.png', gps:[40.64163, -8.6572227], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:3, name:'Tripas da Praça', type:'Confeitaria', photo:'https://i.ibb.co/HnTG92V/tripaspra-a.jpg', gps:[40.6422777, -8.6548049], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:4, name:'Mini Mercado Farol', type:'Mercearia', photo:'https://i.ibb.co/L55cWtz/mercearia.jpg', gps:[40.6422653, -8.656447], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos', 'Peixe', 'Doçes & Pastéis', 'Latícinios', 'Fruta & Legumes', 'Outros']}, {id:5, name:'Azuleto', type:'Sapataria', photo:'https://i.ibb.co/GQK1bG0/sapataria.jpg', gps:[40.6421325, -8.6513097], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Indumentária']}, {id:6, name:'Flor de Aveiro', type:'Talho', photo:'https://i.ibb.co/wK3jcZB/talho.jpg', gps:[40.6433839, -8.6506286], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:7, name:'Mar Aberto', type:'Peixaria', photo:'https://i.ibb.co/bXMmrpM/peixaria.png', gps:[40.6468266, -8.6437491], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Peixe']}]";
 
-        Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Store>>() {
+        Type listType = new TypeToken<ArrayList<Category>>() {
+        }.getType();
+        ArrayList<Category> categories_lst = new Gson().fromJson(categories, listType);
+        Collections.sort(categories_lst);
+
+        ChipGroup chipGroup = root.findViewById(R.id.categories);
+        for(Category category : categories_lst) {
+            Chip chip = new Chip(root.getContext());
+            chip.setText(category.getName());
+            chip.setChipBackgroundColorResource(R.color.bg_chip_state_list);
+            chip.setCheckable(true);
+            chip.setCloseIconVisible(false);
+            chip.setCheckedIconVisible(false);
+            chipGroup.addView(chip);
+        }
+
+        listType = new TypeToken<ArrayList<Store>>() {
         }.getType();
         ArrayList<Store> dataset = new Gson().fromJson(list, listType);
 
