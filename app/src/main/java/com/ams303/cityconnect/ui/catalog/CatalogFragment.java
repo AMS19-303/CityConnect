@@ -1,6 +1,8 @@
 package com.ams303.cityconnect.ui.catalog;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,18 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ams303.cityconnect.CatalogActivity;
+import com.ams303.cityconnect.MainActivity;
 import com.ams303.cityconnect.R;
-import com.ams303.cityconnect.data.Shop;
-import com.ams303.cityconnect.lib.utils;
+import com.ams303.cityconnect.data.Store;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
@@ -39,9 +40,8 @@ public class CatalogFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_catalog, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
-        //textView.setText("This is catalog fragment");
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.shop_list);
+        recyclerView = (RecyclerView) root.findViewById(R.id.store_list);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -52,14 +52,15 @@ public class CatalogFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
 
-        String list = "[{name:'Oita', type:'Croissanteria', image_url:'https://i.ibb.co/vk3VfWb/oita.png'},{name:'Ramona', type:'Hamburgeria', image_url:'https://i.ibb.co/WNCvCQz/ramona.jpg'},{name:'Ria Pão', type:'Padaria', image_url:'https://i.ibb.co/RcYc5M5/riapao.png'},{name:'Tripas da Praça', type:'Confeitaria', image_url:'https://i.ibb.co/HnTG92V/tripaspra-a.jpg'},{name:'Mini Mercado Farol', type:'Mercearia', image_url:'https://i.ibb.co/L55cWtz/mercearia.jpg'}, {name:'Azuleto', type:'Sapataria', image_url:'https://i.ibb.co/GQK1bG0/sapataria.jpg'}, {name:'Flor de Aveiro', type:'Talho', image_url:'https://i.ibb.co/wK3jcZB/talho.jpg'}, {name:'Mar Aberto', type:'Peixaria', image_url:'https://i.ibb.co/bXMmrpM/peixaria.png'}]";
+        String list = "[{id:0, name:'Oita', type:'Croissanteria', photo:'https://i.ibb.co/vk3VfWb/oita.png', gps:[40.6387554, -8.6521355], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos', 'Doçes & Pastéis', 'Peixe']},{id=1, name:'Ramona', type:'Hamburgueria', photo:'https://i.ibb.co/WNCvCQz/ramona.jpg', gps:[40.6381073, -8.6513571], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:2, name:'Ria Pão', type:'Padaria', photo:'https://i.ibb.co/RcYc5M5/riapao.png', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:3, name:'Tripas da Praça', type:'Confeitaria', photo:'https://i.ibb.co/HnTG92V/tripaspra-a.jpg', gps:[40.6422777, -8.6548049], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:4, name:'Mini Mercado Farol', type:'Mercearia', photo:'https://i.ibb.co/L55cWtz/mercearia.jpg', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:5, name:'Azuleto', type:'Sapataria', photo:'https://i.ibb.co/GQK1bG0/sapataria.jpg', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:6, name:'Flor de Aveiro', type:'Talho', photo:'https://i.ibb.co/wK3jcZB/talho.jpg', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:7, name:'Mar Aberto', type:'Peixaria', photo:'https://i.ibb.co/bXMmrpM/peixaria.png', gps:[40.6405, -8.6538], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}]";
 
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Shop>>() {}.getType();
-        ArrayList<Shop> dataset = new Gson().fromJson(list, listType);
+        Type listType = new TypeToken<ArrayList<Store>>() {
+        }.getType();
+        ArrayList<Store> dataset = new Gson().fromJson(list, listType);
 
         // specify an adapter
-        mAdapter = new MyAdapter(dataset);
+        mAdapter = new MyAdapter(dataset, getActivity());
         recyclerView.setAdapter(mAdapter);
 
 
@@ -68,55 +69,69 @@ public class CatalogFragment extends Fragment {
 }
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    private List<Shop> mDataset;
+    private List<Store> mDataset;
+    private Activity root_context;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView shop_image;
-        public TextView shop_name;
-        public TextView shop_type;
-        public TextView shop_open;
+        public ConstraintLayout store_card;
+        public ImageView store_image;
+        public TextView store_name;
+        public TextView store_type;
+        public TextView store_open;
         public Context context;
 
         public MyViewHolder(View v) {
             super(v);
-            shop_image = v.findViewById(R.id.shop_image);
-            shop_name = v.findViewById(R.id.shop_name);
-            shop_type = v.findViewById(R.id.shop_type);
-            shop_open = v.findViewById(R.id.shop_open);
+            store_card = v.findViewById(R.id.store_card);
+            store_image = v.findViewById(R.id.store_image);
+            store_name = v.findViewById(R.id.store_name);
+            store_type = v.findViewById(R.id.store_type);
+            store_open = v.findViewById(R.id.store_open);
             context = v.getContext();
             // https://codinginflow.com/tutorials/android/recyclerview-cardview/part-2-adapter
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<Shop> myDataset) {
+    public MyAdapter(List<Store> myDataset, Activity context) {
         mDataset = myDataset;
+        root_context = context;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
     public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                      int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.shop_card, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.store_card, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        Shop shop = mDataset.get(position);
-        holder.shop_name.setText(shop.getName());
-        holder.shop_type.setText(shop.getType());
-        holder.shop_open.setText("ABERTO");
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
+        final Store store = mDataset.get(position);
+        holder.store_name.setText(store.getName());
+        holder.store_type.setText(store.getType());
+        holder.store_open.setText("ABERTO");
         Picasso.with(holder.context)
-                .load(shop.getImage_url())
+                .load(store.getPhoto())
                 .centerCrop()
                 .fit()
-                .into(holder.shop_image);
+                .into(holder.store_image);
+        holder.store_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(root_context, CatalogActivity.class);
+                intent.putExtra("store", store);
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(root_context, holder.store_card, "storeCatalog");
+                root_context.startActivity(intent, options.toBundle());
+            }
+        });
 
     }
 
