@@ -4,13 +4,6 @@
     <string name="title_cart">Carrinho</string>
     <string name="title_deliveries">Encomendas</string>
     <string name="title_profile">Perfil</string>
-    <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoicm9kcmlnb3Jvc21hbmluaG8iLCJhIjoiY2l5dzBma3J5MDBnOTJ3cWhzc3BvcmttaSJ9.5vjwohHSYhqysTL0VH2ewQ</string>
+    <string name="api_url">cityconnect.ddns.net/api</string>
 </resources>

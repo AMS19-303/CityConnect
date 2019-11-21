@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroup"
+            android:id="@+id/categories"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -42,91 +42,11 @@
             app:layout_constraintTop_toBottomOf="@+id/text_home"
             app:singleSelection="false">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip5"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Indumentária"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip4"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Doçes &amp; Pastéis"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip9"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Laticínios"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip7"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fruta &amp; Legumes"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip8"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Carnes &amp; Enchidos"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip6"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Peixe"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip11"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Artesanato"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip10"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Outros"
-                app:chipBackgroundColor="@color/bg_chip_state_list"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:closeIconVisible="false" />
-
 
         </com.google.android.material.chip.ChipGroup>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/shop_list"
+            android:id="@+id/store_list"
             android:layout_width="409dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -134,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroup"
+            app:layout_constraintTop_toBottomOf="@+id/categories"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
