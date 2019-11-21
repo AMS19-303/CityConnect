@@ -38,10 +38,10 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         final TextView textView = root.findViewById(R.id.text_notifications);
         //textView.setText("This is profile fragment");
-        final TextView Name = root.findViewById(R.id.Name);
-        final TextView Email = root.findViewById(R.id.Email);
-        final TextView NIF = root.findViewById(R.id.NIF);
-        final TextView Address = root.findViewById(R.id.Address);
+        final EditText Name = root.findViewById(R.id.Name);
+        final EditText Email = root.findViewById(R.id.Email);
+        final EditText NIF = root.findViewById(R.id.NIF);
+        final EditText Address = root.findViewById(R.id.Address);
         final ImageView avatar = root.findViewById(R.id.imageView);
         final Button editButton = root.findViewById(R.id.edit);
         final Button signOutButton = root.findViewById(R.id.sign_out);

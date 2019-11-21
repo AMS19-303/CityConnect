@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.security.MessageDigest;
@@ -29,22 +30,35 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences("CityConnect", MODE_PRIVATE);
         String result = sp.getString("email", null);
 
+        setContentView(R.layout.activity_login);
+
+        final TextView email_view = findViewById(R.id.username);
+        final TextView password_view = findViewById(R.id.password);
+        final ProgressBar loading_pb = findViewById(R.id.loading);
+        final Button send_button = findViewById(R.id.login);
+
         if (result != null) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("email", result);
             startActivity(intent);
         }
-
-        setContentView(R.layout.activity_login);
-
-        final TextView email_view = findViewById(R.id.username);
-        final TextView password_view = findViewById(R.id.password);
-        Button send_button = findViewById(R.id.login);
+        else {
+            loading_pb.setVisibility(View.GONE);
+            email_view.setVisibility(View.VISIBLE);
+            password_view.setVisibility(View.VISIBLE);
+            send_button.setVisibility(View.VISIBLE);
+        }
 
         final Context context = this;
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                email_view.setVisibility(View.GONE);
+                password_view.setVisibility(View.GONE);
+                send_button.setVisibility(View.GONE);
+                loading_pb.setVisibility(View.VISIBLE);
+
                 String email = email_view.getText().toString();
                 String password = password_view.getText().toString();
 
