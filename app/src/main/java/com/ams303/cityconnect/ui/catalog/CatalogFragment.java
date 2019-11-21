@@ -104,10 +104,10 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         public MyViewHolder(View v) {
             super(v);
-            store_card = v.findViewById(R.id.store_card);
+            store_card = v.findViewById(R.id.item_view);
             store_image = v.findViewById(R.id.store_image);
-            store_name = v.findViewById(R.id.store_name);
-            store_type = v.findViewById(R.id.store_type);
+            store_name = v.findViewById(R.id.item_name);
+            store_type = v.findViewById(R.id.item_description);
             store_open = v.findViewById(R.id.store_open);
             context = v.getContext();
             // https://codinginflow.com/tutorials/android/recyclerview-cardview/part-2-adapter
