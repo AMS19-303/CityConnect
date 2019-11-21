@@ -20,7 +20,7 @@ public class DeliveriesFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_deliveries, container, false);
         final TextView textView = root.findViewById(R.id.text_notifications);
-        textView.setText("This is deliveries fragment");
+        textView.setText("Encomendas\n\nEm Desenvolvimento");
         return root;
     }
 }

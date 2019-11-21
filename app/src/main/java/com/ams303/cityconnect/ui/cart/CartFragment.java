@@ -20,7 +20,7 @@ public class CartFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_cart, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
-        textView.setText("This is cart fragment");
+        textView.setText("Carrinho\n\nEm Desenvolvimento");
         return root;
     }
 }

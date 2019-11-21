@@ -44,7 +44,7 @@
         app:layout_constraintVertical_bias="0.626" />
 
     <EditText
-        android:id="@+id/Phone"
+        android:id="@+id/NIF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -61,6 +61,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPostalAddress"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,21 +75,31 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/Name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/text_notifications"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/avatar" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="644dp"
-        android:text="Button"
+        android:layout_marginTop="592dp"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:text="Editar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:text="Sair"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
