@@ -63,6 +63,11 @@ public class LoginActivity extends AppCompatActivity {
                 String password = password_view.getText().toString();
 
                 if(email.length() == 0 || password.length() == 0){
+                    loading_pb.setVisibility(View.GONE);
+                    email_view.setVisibility(View.VISIBLE);
+                    password_view.setVisibility(View.VISIBLE);
+                    send_button.setVisibility(View.VISIBLE);
+
                     Snackbar.make(v, "Ambos os campos são obrigatórios!", Snackbar.LENGTH_LONG)
                             .show();
                     return;
@@ -94,10 +99,20 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else {
+                    loading_pb.setVisibility(View.GONE);
+                    email_view.setVisibility(View.VISIBLE);
+                    password_view.setVisibility(View.VISIBLE);
+                    send_button.setVisibility(View.VISIBLE);
+
                     Snackbar.make(v, R.string.login_failed, Snackbar.LENGTH_LONG)
                             .show();
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 }
