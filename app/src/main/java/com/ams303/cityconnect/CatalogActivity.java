@@ -21,6 +21,12 @@ import android.widget.Toast;
 
 import com.ams303.cityconnect.data.Item;
 import com.ams303.cityconnect.data.Store;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -122,7 +128,7 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
-        String items = "[{name:'Leite Agros Meio Gordo 1L', description:'UHT Ultrapasteurizado', base_unit:1, unit:'unidade', unit_price:0.5}, {name:'Carne Picada', description:'Feita na hora', base_unit:500, unit:'gramas', unit_price:1.2}]";
+        final String items = "[{name:'Leite Agros Meio Gordo 1L', description:'UHT Ultrapasteurizado', base_unit:1, unit:'unidade', unit_price:0.5}, {name:'Carne Picada', description:'Feita na hora', base_unit:500, unit:'gramas', unit_price:1.2}]";
 
         recyclerView = (RecyclerView) findViewById(R.id.item_list);
 
@@ -135,15 +141,37 @@ public class CatalogActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
 
-        Type listType = new TypeToken<ArrayList<Item>>() {
-        }.getType();
-        ArrayList<Item> dataset = new Gson().fromJson(items, listType);
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
 
+        // Request a string response from the provided URL.
+        StringRequest categories_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + "/catalog?store=" + store.getId(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Type listType = new TypeToken<ArrayList<Item>>() {
+                        }.getType();
+                        ArrayList<Item> dataset = new Gson().fromJson(response, listType);
+                        setItems(dataset);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Type listType = new TypeToken<ArrayList<Item>>() {
+                }.getType();
+                ArrayList<Item> dataset = new Gson().fromJson(items, listType);
+                setItems(dataset);
+            }
+        });
+
+        queue.add(categories_request);
+
+    }
+
+    public void setItems(List<Item> dataset){
         // specify an adapter
         mAdapter = new MyAdapter(dataset, this);
         recyclerView.setAdapter(mAdapter);
-
-
     }
 }
 
