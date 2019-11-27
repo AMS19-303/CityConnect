@@ -28,7 +28,5 @@ public class Category implements Comparable{
         if(!(o instanceof Category) || (food && ((Category) o).isFood())) return 0;
         if (food && !((Category) o).isFood()) return -1;
         else return 1;
-
-
     }
 }

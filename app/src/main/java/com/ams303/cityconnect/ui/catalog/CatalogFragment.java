@@ -8,8 +8,10 @@ import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -30,6 +32,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
@@ -44,6 +47,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,6 +56,10 @@ public class CatalogFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private RequestQueue queue;
+
+    private final String categories = "[{id:0, name:'Doçes & Pastéis', food: true}, {id:1, name:'Latícinios', food:true}, {id:2, name:'Fruta & Legumes', food:true}, {id:3, name:'Carne & Enchidos', food:true}, {id:4, name:'Peixe', food:true}, {id:5, name:'Indumentária', food:false}, {id:6, name:'Artesanato', food:false}, {id:7, name:'Outros', food:false}]";
+    private final String list = "[{id:0, name:'Oita', type:'Croissanteria', photo:'https://i.ibb.co/vk3VfWb/oita.png', gps:[40.6430422, -8.6495785], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:1, name:'Ramona', type:'Hamburgueria', photo:'https://i.ibb.co/WNCvCQz/ramona.jpg', gps:[40.6381073, -8.6513571], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:2, name:'Ria Pão', type:'Padaria', photo:'https://i.ibb.co/RcYc5M5/riapao.png', gps:[40.64163, -8.6572227], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:4, name:'Mini Mercado Farol', type:'Mercearia', photo:'https://i.ibb.co/L55cWtz/mercearia.jpg', gps:[40.6422653, -8.656447], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos', 'Peixe', 'Doçes & Pastéis', 'Latícinios', 'Fruta & Legumes', 'Outros']}, {id:5, name:'Azuleto', type:'Sapataria', photo:'https://i.ibb.co/GQK1bG0/sapataria.jpg', gps:[40.6421325, -8.6513097], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Indumentária']}, {id:6, name:'Flor de Aveiro', type:'Talho', photo:'https://i.ibb.co/wK3jcZB/talho.jpg', gps:[40.6433839, -8.6506286], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:7, name:'Mar Aberto', type:'Peixaria', photo:'https://i.ibb.co/bXMmrpM/peixaria.png', gps:[40.6468266, -8.6437491], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Peixe']}]";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -70,13 +78,10 @@ public class CatalogFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
 
-        final String categories = "[{id:0, name:'Doçes & Pastéis', food: true}, {id:1, name:'Latícinios', food:true}, {id:2, name:'Fruta & Legumes', food:true}, {id:3, name:'Carne & Enchidos', food:true}, {id:4, name:'Peixe', food:true}, {id:5, name:'Indumentária', food:false}, {id:6, name:'Artesanato', food:false}, {id:7, name:'Outros', food:false}]";
-        final String list = "[{id:0, name:'Oita', type:'Croissanteria', photo:'https://i.ibb.co/vk3VfWb/oita.png', gps:[40.6430422, -8.6495785], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:1, name:'Ramona', type:'Hamburgueria', photo:'https://i.ibb.co/WNCvCQz/ramona.jpg', gps:[40.6381073, -8.6513571], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:2, name:'Ria Pão', type:'Padaria', photo:'https://i.ibb.co/RcYc5M5/riapao.png', gps:[40.64163, -8.6572227], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:4, name:'Mini Mercado Farol', type:'Mercearia', photo:'https://i.ibb.co/L55cWtz/mercearia.jpg', gps:[40.6422653, -8.656447], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos', 'Peixe', 'Doçes & Pastéis', 'Latícinios', 'Fruta & Legumes', 'Outros']}, {id:5, name:'Azuleto', type:'Sapataria', photo:'https://i.ibb.co/GQK1bG0/sapataria.jpg', gps:[40.6421325, -8.6513097], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Indumentária']}, {id:6, name:'Flor de Aveiro', type:'Talho', photo:'https://i.ibb.co/wK3jcZB/talho.jpg', gps:[40.6433839, -8.6506286], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:7, name:'Mar Aberto', type:'Peixaria', photo:'https://i.ibb.co/bXMmrpM/peixaria.png', gps:[40.6468266, -8.6437491], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Peixe']}]";
-
         final View final_root = root;
 
         // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(root.getContext());
+        queue = Volley.newRequestQueue(root.getContext());
 
         // Request a string response from the provided URL.
         StringRequest categories_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + "/categories",
@@ -101,7 +106,47 @@ public class CatalogFragment extends Fragment {
         queue.add(categories_request);
 
 
-        StringRequest stores_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + "/stores",
+        getStores(null);
+
+        return root;
+    }
+
+    public void setCategories(List<Category> categories_lst, final View root) {
+        Collections.sort(categories_lst);
+        final ChipGroup chipGroup = root.findViewById(R.id.categories);
+        for(Category category : categories_lst) {
+            Chip chip = new Chip(root.getContext());
+            chip.setText(category.getName());
+            chip.setChipBackgroundColorResource(R.color.bg_chip_state_list);
+            chip.setCheckable(true);
+            chip.setCloseIconVisible(false);
+            chip.setCheckedIconVisible(false);
+            chip.setId(category.getId());
+            chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int chip_count = chipGroup.getChildCount();
+                    List<Integer> categories = new ArrayList<>();
+                    for(int j = 0; j < chip_count; j++){
+                        Chip chip = (Chip) chipGroup.getChildAt(j);
+                        if(chip.isChecked()) {
+                            categories.add(chip.getId());
+                        }
+                    }
+                    getStores(categories);
+                }
+            });
+            chipGroup.addView(chip);
+        }
+    }
+
+    public void getStores(List<Integer> categories){
+        String endpoint = "/stores";
+        if(categories != null && categories.size() > 0) {
+            endpoint += "?" + getCategoryList(categories);
+        }
+
+        StringRequest stores_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + endpoint,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -121,29 +166,21 @@ public class CatalogFragment extends Fragment {
         });
 
         queue.add(stores_request);
-
-
-        return root;
-    }
-
-    public void setCategories(List<Category> categories_lst, View root) {
-        Collections.sort(categories_lst);
-        ChipGroup chipGroup = root.findViewById(R.id.categories);
-        for(Category category : categories_lst) {
-            Chip chip = new Chip(root.getContext());
-            chip.setText(category.getName());
-            chip.setChipBackgroundColorResource(R.color.bg_chip_state_list);
-            chip.setCheckable(true);
-            chip.setCloseIconVisible(false);
-            chip.setCheckedIconVisible(false);
-            chipGroup.addView(chip);
-        }
     }
 
     public void setStores(List<Store> dataset){
         // specify an adapter
         mAdapter = new MyAdapter(dataset, getActivity());
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private String getCategoryList(List<Integer> categories){
+        StringBuilder res = new StringBuilder();
+        for(Integer i : categories){
+            res.append("&category=" + i);
+        }
+        res.deleteCharAt(0);
+        return res.toString();
     }
 }
 
