@@ -251,7 +251,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                                     Product product = new Product(item.getName(), quantity_value, (quantity_value * item.getPrice()) / item.getBase_unit(), store_name, item.getUnit());
                                     Cart.addItem(root_context, product);
 
-                                    Snackbar.make(final_v, "Adicionado ao carrinho com sucesso!", Snackbar.LENGTH_LONG)
+                                    Snackbar.make(final_v, "Adicionado ao carrinho com sucesso!", Snackbar.LENGTH_SHORT)
                                             /*
                                             .setAction("Ver", new View.OnClickListener() {
                                                 @Override

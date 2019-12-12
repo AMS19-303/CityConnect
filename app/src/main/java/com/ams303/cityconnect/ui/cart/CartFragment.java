@@ -1,9 +1,12 @@
 package com.ams303.cityconnect.ui.cart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +77,7 @@ public class CartFragment extends Fragment {
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(final_root, "Carrinho apagado com sucesso!", Snackbar.LENGTH_LONG)
+                Snackbar.make(final_root, "Carrinho apagado com sucesso!", Snackbar.LENGTH_SHORT)
                         .show();
                 Cart.resetCart(final_root.getContext());
                 recyclerView.clearOnChildAttachStateChangeListeners();
@@ -82,26 +85,28 @@ public class CartFragment extends Fragment {
             }
         });
 
+        // TODO
         order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(final_root, "Encomenda agendada com sucesso!", Snackbar.LENGTH_LONG)
+                Snackbar.make(final_root, "Encomenda agendada com sucesso!", Snackbar.LENGTH_SHORT)
                         .show();
                 Cart.resetCart(final_root.getContext());
+                recyclerView.clearOnChildAttachStateChangeListeners();
+                fillPage();
             }
         });
 
-        // TODO
         add_request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showRequestPopup(cart, -1, root, null);
             }
         });
 
         cart = Cart.getCart(root.getContext());
 
-        setEmptyVisibility(cart, empty);
+        setEmptyVisibility();
         price.setText(utils.getFormattedPrice(cart.getSubtotal()));
         // TODO
         String date_str = (cart.getDeliveryDate() != null) ? cart.getDeliveryDate().toString() : "null";
@@ -118,17 +123,17 @@ public class CartFragment extends Fragment {
 
         final Cart final_cart = cart;
         final TextView final_price = price;
-        final TextView final_empty = empty;
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(@NonNull View view) {
                 final_price.setText(utils.getFormattedPrice(final_cart.getSubtotal()));
+                setEmptyVisibility();
             }
 
             @Override
             public void onChildViewDetachedFromWindow(@NonNull View view) {
                 final_price.setText(utils.getFormattedPrice(final_cart.getSubtotal()));
-                setEmptyVisibility(final_cart, final_empty);
+                setEmptyVisibility();
             }
         });
         setItems(cart.getItems());
@@ -142,7 +147,7 @@ public class CartFragment extends Fragment {
         cart.saveCart(root.getContext());
     }
 
-    public void setEmptyVisibility(Cart cart, TextView empty) {
+    public void setEmptyVisibility() {
         if (cart.getSize() == 0) {
             empty.setVisibility(View.VISIBLE);
         }
@@ -153,14 +158,66 @@ public class CartFragment extends Fragment {
 
     public void setItems(List<CartItem> dataset){
         // specify an adapter
-        mAdapter = new MyAdapter(dataset, getActivity());
+        mAdapter = new MyAdapter(dataset, getActivity(), root, cart);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    public static void showRequestPopup(final Cart cart, final int position, final View view, final RecyclerView.Adapter adapter) {
+        String save_str = "Adicionar";
+        String title_str = "Adicionar Pedido";
+        String success_str = "Adicionado ao carrinho com sucesso!";
+        if (position >= 0) {
+            save_str = "Salvar";
+            title_str = "Editar Pedido";
+            success_str = "Pedido alterado com sucesso!";
+        }
+
+        final String final_success_str = success_str;
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(view.getContext(), R.style.dialogAlertTheme));
+        builder.setView(R.layout.dialog_add_request)
+                // Add action buttons
+                .setPositiveButton(save_str, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText description = ((AlertDialog) dialog).findViewById(R.id.description);
+
+                        if(description.getText().toString().length() != 0) {
+                            if (position >= 0) {
+                                cart.getItems().get(position).setName(description.getText().toString());
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                Request request = new Request(description.getText().toString());
+                                cart.getItems().add(request);
+                            }
+
+                            cart.saveCart(view.getContext());
+
+                            Snackbar.make(view, final_success_str, Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        builder.setTitle(title_str);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        if(position >= 0) {
+            EditText description = dialog.findViewById(R.id.description);
+            description.setText(cart.getItems().get(position).getName());
+        }
     }
 }
 
 class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<CartItem> mDataset;
     private Activity root_context;
+    private View root_view;
+    private Cart cart;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -205,9 +262,11 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<CartItem> myDataset, Activity context) {
+    public MyAdapter(List<CartItem> myDataset, Activity context, View root, Cart c) {
         mDataset = myDataset;
         root_context = context;
+        root_view = root;
+        cart = c;
     }
 
     // Create new views (invoked by the layout manager)
@@ -257,12 +316,13 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else {
             RequestViewHolder rholder = (RequestViewHolder) holder;
             Request request = (Request) item;
+            final MyAdapter adapter = this;
 
             rholder.request_description.setText(request.getName());
             rholder.request_edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    notifyDataSetChanged();
+                    CartFragment.showRequestPopup(cart, position, root_view, adapter);
                 }
             });
             rholder.request_delete.setOnClickListener(deleteListener);

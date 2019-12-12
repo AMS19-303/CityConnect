@@ -12,4 +12,8 @@ public class CartItem {
     public String getName() {
         return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
