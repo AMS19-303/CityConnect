@@ -29,4 +29,17 @@
         android:name="com.ams303.cityconnect.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <activity
+        android:id="@+id/navigation_catalog_activity"
+        android:name="com.ams303.cityconnect.CatalogActivity"
+        android:label="Catálogo"
+        tools:layout="@layout/activity_catalog" />
+
+    <activity
+        android:id="@+id/navigation_login"
+        android:name="com.ams303.cityconnect.ui.login.LoginActivity"
+        android:label="CityConnect"
+        tools:layout="@layout/activity_login" />
+
 </navigation>

@@ -23,4 +23,13 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="dialogAlertTheme" parent="@style/ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:buttonBarButtonStyle">@style/customButtonStyle</item>
+    </style>
+
+    <style name="customButtonStyle" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

@@ -2,25 +2,31 @@ package com.ams303.cityconnect;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.ams303.cityconnect.data.Cart;
 import com.ams303.cityconnect.data.Item;
+import com.ams303.cityconnect.data.Product;
 import com.ams303.cityconnect.data.Store;
+import com.ams303.cityconnect.lib.utils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -62,7 +68,7 @@ public class CatalogActivity extends AppCompatActivity {
         Mapbox.getInstance(getApplicationContext(), getString(R.string.mapbox_access_token));
 
         setContentView(R.layout.activity_catalog);
-        TextView store_name = findViewById(R.id.item_name);
+        final TextView store_name = findViewById(R.id.item_name);
         TextView store_type = findViewById(R.id.item_description);
         TextView store_open = findViewById(R.id.store_open);
         ImageView store_image = findViewById(R.id.store_image);
@@ -152,7 +158,7 @@ public class CatalogActivity extends AppCompatActivity {
                         Type listType = new TypeToken<ArrayList<Item>>() {
                         }.getType();
                         ArrayList<Item> dataset = new Gson().fromJson(response, listType);
-                        setItems(dataset);
+                        setItems(dataset, store.getName());
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -160,7 +166,7 @@ public class CatalogActivity extends AppCompatActivity {
                 Type listType = new TypeToken<ArrayList<Item>>() {
                 }.getType();
                 ArrayList<Item> dataset = new Gson().fromJson(items, listType);
-                setItems(dataset);
+                setItems(dataset, store.getName());
             }
         });
 
@@ -168,9 +174,9 @@ public class CatalogActivity extends AppCompatActivity {
 
     }
 
-    public void setItems(List<Item> dataset){
+    public void setItems(List<Item> dataset, String store_name){
         // specify an adapter
-        mAdapter = new MyAdapter(dataset, this);
+        mAdapter = new MyAdapter(dataset, this, store_name, this);
         recyclerView.setAdapter(mAdapter);
     }
 }
@@ -178,6 +184,8 @@ public class CatalogActivity extends AppCompatActivity {
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<Item> mDataset;
     private Context root_context;
+    private String store_name;
+    private Activity root_activity;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -201,9 +209,11 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<Item> myDataset, Context context) {
+    public MyAdapter(List<Item> myDataset, Context context, String name, Activity activity) {
         mDataset = myDataset;
         root_context = context;
+        store_name = name;
+        root_activity = activity;
     }
 
     // Create new views (invoked by the layout manager)
@@ -226,8 +236,87 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.item_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "Adicionado ao carrinho com sucesso!", Snackbar.LENGTH_SHORT)
-                        .show();
+                final View final_v = v;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(root_context, R.style.dialogAlertTheme));
+                builder.setView(R.layout.dialog_add_to_cart)
+                        // Add action buttons
+                        .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                EditText quantity = ((AlertDialog) dialog).findViewById(R.id.quantity_et);
+
+                                try {
+                                    int quantity_value = Integer.parseInt(quantity.getText().toString());
+                                    Product product = new Product(item.getName(), quantity_value, (quantity_value * item.getPrice()) / item.getBase_unit(), store_name, item.getUnit());
+                                    Cart.addItem(root_context, product);
+
+                                    Snackbar.make(final_v, "Adicionado ao carrinho com sucesso!", Snackbar.LENGTH_LONG)
+                                            /*
+                                            .setAction("Ver", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Navigation.findNavController((Activity) root_context, R.id.nav_host_fragment).navigate(R.id.navigation_cart);
+                                                }
+                                            })
+                                            .setActionTextColor(Color.YELLOW)
+                                             */
+                                            .show();
+                                } catch (NumberFormatException nfe) {}
+                            }
+                        })
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                builder.setTitle("Adicionar ao Carrinho");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                final EditText quantity = dialog.findViewById(R.id.quantity_et);
+                final TextView price = dialog.findViewById(R.id.price_tv);
+
+                quantity.setText(String.valueOf(item.getBase_unit()), TextView.BufferType.EDITABLE);
+                price.setText(utils.getFormattedPrice(item.getPrice()));
+
+                dialog.findViewById(R.id.increase_btn).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int new_value = Integer.parseInt(quantity.getText().toString()) + item.getBase_unit();
+                        quantity.setText(String.valueOf(new_value), TextView.BufferType.EDITABLE);
+                        price.setText(utils.getFormattedPrice((new_value * item.getPrice()) / item.getBase_unit()));
+                    }
+                });
+
+                dialog.findViewById(R.id.decrease_btn).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int new_value = Integer.parseInt(quantity.getText().toString()) - item.getBase_unit();
+                        if (new_value < 0) new_value = 0;
+                        quantity.setText(String.valueOf(new_value), TextView.BufferType.EDITABLE);
+                        price.setText(utils.getFormattedPrice((new_value * item.getPrice()) / item.getBase_unit()));
+                    }
+                });
+
+                quantity.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        int new_value;
+                        try {
+                            new_value = Integer.parseInt(s.toString());
+                        } catch (NumberFormatException nfe) {
+                            new_value = 0;
+                        }
+                        price.setText(utils.getFormattedPrice((new_value * item.getPrice()) / item.getBase_unit()));
+                    }
+                });
             }
         });
 

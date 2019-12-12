@@ -16,7 +16,6 @@
         android:id="@+id/store_card2"
         android:transitionName="storeCatalog">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
