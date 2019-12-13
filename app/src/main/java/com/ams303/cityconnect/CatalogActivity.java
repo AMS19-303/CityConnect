@@ -248,7 +248,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
                                 try {
                                     int quantity_value = Integer.parseInt(quantity.getText().toString());
-                                    Product product = new Product(item.getName(), quantity_value, (quantity_value * item.getPrice()) / item.getBase_unit(), store_name, item.getUnit());
+                                    Product product = new Product(item.getId(), item.getName(), quantity_value, (quantity_value * item.getPrice()) / item.getBase_unit(), store_name, item.getUnit());
                                     Cart.addItem(root_context, product);
 
                                     Snackbar.make(final_v, "Adicionado ao carrinho com sucesso!", Snackbar.LENGTH_SHORT)

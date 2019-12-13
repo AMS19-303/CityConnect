@@ -3,7 +3,7 @@ package com.ams303.cityconnect.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Store implements Parcelable {
+public class Store implements Parcelable{
     private int id;
     private String name;
     private String type;

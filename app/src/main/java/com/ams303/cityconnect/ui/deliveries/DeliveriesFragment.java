@@ -1,6 +1,7 @@
 package com.ams303.cityconnect.ui.deliveries;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,12 +13,14 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ams303.cityconnect.DeliveryActivity;
 import com.ams303.cityconnect.R;
 import com.ams303.cityconnect.data.Order;
 import com.ams303.cityconnect.lib.utils;
@@ -44,8 +47,8 @@ public class DeliveriesFragment extends Fragment {
     private RecyclerView.LayoutManager history_layoutManager;
     private RequestQueue queue;
 
-    private final String active_list = "[{id:'a', items: [{product: null, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Ramona'}], active: true, courier: null, star_rating: null, total_price: 31.29, timestamp: '2019-12-13', address: 'Rua do Padeiro, nº 221b'}]";
-    private final String history_list = "[{id:'a', items: [{product: null, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Mini Mercado Farol'}, {product: null, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Flor de Aveiro'}], active: false, courier: null, star_rating: 4, total_price: 25.79, timestamp: '2019-12-10', address: 'Rua do Padeiro, nº 221b'}, {id:'a', items: [{product: null, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Tripas da Praça'}, {product: null, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Oita'}], active: false, courier: null, star_rating: 5, total_price: 6.30, timestamp: '2019-03-28', address: 'Rua do Padeiro, nº 221b'}]";
+    private final String active_list = "[{id:'a', items: [{product: {store_id: 1, id: 1, name: 'Ramona com ôvo', description: 'Hamburguer', base_unit: 1, unit: 'unidade', unit_price: 2.35}, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Ramona', request: null}], active: true, courier: null, star_rating: null, total_price: 31.29, timestamp: '2019-12-13', address: 'Rua do Padeiro, nº 221b'}]";
+    private final String history_list = "[{id:'a', items: [{product: {store_id: 4, id: 1, name: 'Leite Agros 1L', description: 'Hamburguer', base_unit: 1, unit: 'unidade', unit_price: 2.35}, quantity: 2, cumul_price: 2.35, discount: 0.1, store_name: 'Mini Mercado Farol'}, {product: {store_id: 6, id: 1, name: 'Carne Picada', description: 'Hamburguer', base_unit: 500, unit: 'gramas', unit_price: 0.93}, quantity: 600, cumul_price: 1.12, discount: 0.1, store_name: 'Flor de Aveiro'}], active: false, courier: {user: {first_name: 'Eurico', last_name: 'Dias'}, avg_rating: 4.6, nr_deliveries: 522}, star_rating: 4, total_price: 25.79, timestamp: '2019-12-10', address: 'Rua do Padeiro, nº 221b'}, {id:'a', items: [{product: {store_id: 3, id: 1, name: 'Tripa com Nestle', description: 'Hamburguer', base_unit: 1, unit: 'unidade', unit_price: 1.5}, quantity: 1, cumul_price: 1.5, discount: 0.1, store_name: 'Tripas da Praça', request: null}, {product: {store_id: 8, id: 1, name: 'Croissant com carne de vitela', description: 'Hamburguer', base_unit: 1, unit: 'unidade', unit_price: 2.35}, quantity: 1, cumul_price: 2.35, discount: 0.1, store_name: 'Oita', request: null}, {store_id: null, product: null, quantity: null, cumul_price: null, discount: null, store_name: null, request: '3.5kg de bananas da Madeira'}], active: false, courier: {user: {first_name: 'Rodrigo', last_name: 'Rosmaninho'}, avg_rating: 4.8, nr_deliveries: 873}, star_rating: 5, total_price: 6.30, timestamp: '2019-03-28', address: 'Rua do Padeiro, nº 221b'}]";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -76,8 +79,7 @@ public class DeliveriesFragment extends Fragment {
     }
 
     public void getActiveItems(){
-        // TODO
-        String endpoint = "/orders";
+        String endpoint = "/order?active=True";
 
         StringRequest orders_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + endpoint,
                 new Response.Listener<String>() {
@@ -102,8 +104,7 @@ public class DeliveriesFragment extends Fragment {
     }
 
     public void getHistoryItems(){
-        // TODO
-        String endpoint = "/orders";
+        String endpoint = "/order?active=False";
 
         StringRequest orders_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + endpoint,
                 new Response.Listener<String>() {
@@ -162,6 +163,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public TextView order_price;
         public TextView order_status;
         public ImageView order_rating;
+        public ConstraintLayout order_view;
 
         public MyViewHolder(View v) {
             super(v);
@@ -172,6 +174,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             order_price = v.findViewById(R.id.order_price);
             order_status = v.findViewById(R.id.order_status);
             order_rating = v.findViewById(R.id.order_rating);
+            order_view = v.findViewById(R.id.order_view);
             // https://codinginflow.com/tutorials/android/recyclerview-cardview/part-2-adapter
         }
     }
@@ -222,6 +225,17 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             holder.order_rating.setVisibility(View.VISIBLE);
             holder.order_rating.setImageResource(order.getDrawable());
         }
+
+        holder.order_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(root_context, DeliveryActivity.class);
+                intent.putExtra("order", order);
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(root_context, holder.order_view, "deliveryDetails");
+                root_context.startActivity(intent, options.toBundle());
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

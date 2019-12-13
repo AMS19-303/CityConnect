@@ -1,11 +1,14 @@
 package com.ams303.cityconnect.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.ams303.cityconnect.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Order {
+public class Order implements Parcelable {
     private String id;
     private List<OrderItem> items;
     private boolean active;
@@ -62,11 +65,21 @@ public class Order {
         List<String> stores = new ArrayList<>();
         for (OrderItem item : items) {
             String name = item.getStore_name();
-            if (!stores.contains(name)) {
+            if (!stores.contains(name) && item.isProduct()) {
                 stores.add(item.getStore_name());
             }
         }
         return stores.toString().substring(1, stores.toString().length()-1);
+    }
+
+    public List<Integer> getStoreIDs() {
+        List<Integer> stores = new ArrayList<>();
+        for (OrderItem item : items) {
+            if (item.isProduct()) {
+                stores.add(item.getProduct().getStore_id());
+            }
+        }
+        return stores;
     }
 
     public int getDrawable() {
@@ -86,5 +99,44 @@ public class Order {
 
     public boolean hasCourier() {
         return courier != null;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(id);
+        out.writeList(items);
+        out.writeByte((byte) (active ? 1 : 0));
+        out.writeParcelable(courier, flags);
+        out.writeInt(star_rating);
+        out.writeDouble(total_price);
+        out.writeString(timestamp);
+        out.writeString(address);
+    }
+
+    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+    public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
+        public Order createFromParcel(Parcel in) {
+            return new Order(in);
+        }
+
+        public Order[] newArray(int size) {
+            return new Order[size];
+        }
+    };
+
+    private Order(Parcel in) {
+        id = in.readString();
+        items = in.readArrayList(OrderItem.class.getClassLoader());
+        active = in.readByte() != 0;
+        courier = in.readParcelable(Courier.class.getClassLoader());
+        star_rating = in.readInt();
+        total_price = in.readDouble();
+        timestamp = in.readString();
+        address = in.readString();
     }
 }
