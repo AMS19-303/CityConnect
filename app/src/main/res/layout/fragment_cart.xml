@@ -106,14 +106,30 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/comment_et" />
 
-            <EditText
-                android:id="@+id/date_et"
+            <Button
+                android:id="@+id/edit_btn"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:ems="10"
-                android:inputType="date"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Alterar"
+                android:textColor="@android:color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/date_tv"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/date_tv"
+                app:layout_constraintTop_toTopOf="@+id/date_tv" />
+
+            <TextView
+                android:id="@+id/date_tv"
+                android:layout_width="139dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:ems="10"
+                android:text="2019-12-13 21:50"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/textView2"
                 app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
             <TextView
@@ -191,6 +207,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/comment_et" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

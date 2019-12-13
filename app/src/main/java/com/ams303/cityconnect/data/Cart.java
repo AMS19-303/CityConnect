@@ -15,11 +15,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Cart {
     private List<CartItem> items;
-    private Date deliveryDate;
+    private String deliveryDate;
     private String address;
     private String comment;
 
-    public Cart(List<CartItem> items, Date deliveryDate, String address, String comment) {
+    public Cart(List<CartItem> items, String deliveryDate, String address, String comment) {
         this.items = items;
         this.deliveryDate = deliveryDate;
         this.address = address;
@@ -30,7 +30,7 @@ public class Cart {
         return items;
     }
 
-    public Date getDeliveryDate() {
+    public String getDeliveryDate() {
         return deliveryDate;
     }
 
@@ -42,7 +42,7 @@ public class Cart {
         return comment;
     }
 
-    public void setDeliveryDate(Date deliveryDate) {
+    public void setDeliveryDate(String deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 

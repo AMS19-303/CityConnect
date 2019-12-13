@@ -2,18 +2,23 @@ package com.ams303.cityconnect.ui.cart;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -33,8 +38,10 @@ import com.ams303.cityconnect.lib.utils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
+import java.util.Calendar;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CartFragment extends Fragment {
@@ -45,7 +52,8 @@ public class CartFragment extends Fragment {
     private TextView empty;
     private Button add_request;
     private TextView price;
-    private EditText date;
+    private TextView date;
+    private Button edit;
     private EditText address;
     private EditText comment;
     private Button reset;
@@ -68,7 +76,8 @@ public class CartFragment extends Fragment {
         recyclerView = root.findViewById(R.id.cart_items_rv);
         add_request = root.findViewById(R.id.add_request_btn);
         price = root.findViewById(R.id.price_tv);
-        date = root.findViewById(R.id.date_et);
+        date = root.findViewById(R.id.date_tv);
+        edit = root.findViewById(R.id.edit_btn);
         address = root.findViewById(R.id.address_et);
         comment = root.findViewById(R.id.comment_et);
         reset = root.findViewById(R.id.reset_btn);
@@ -104,17 +113,22 @@ public class CartFragment extends Fragment {
             }
         });
 
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDateTimePicker(root);
+            }
+        });
+
         cart = Cart.getCart(root.getContext());
 
         setEmptyVisibility();
         price.setText(utils.getFormattedPrice(cart.getSubtotal()));
         // TODO
-        String date_str = (cart.getDeliveryDate() != null) ? cart.getDeliveryDate().toString() : "null";
+        String date_str = (cart.getDeliveryDate() != null) ? cart.getDeliveryDate() : utils.calendarToString(Calendar.getInstance());
         date.setText(date_str);
         address.setText(cart.getAddress());
         comment.setText(cart.getComment());
-
-        recyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(root.getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -142,6 +156,7 @@ public class CartFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        cart.setDeliveryDate(date.getText().toString());
         cart.setAddress(address.getText().toString());
         cart.setComment(comment.getText().toString());
         cart.saveCart(root.getContext());
@@ -210,6 +225,32 @@ public class CartFragment extends Fragment {
             EditText description = dialog.findViewById(R.id.description);
             description.setText(cart.getItems().get(position).getName());
         }
+    }
+
+    public void showDateTimePicker(final View root) {
+        final Calendar currentDate = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
+        new DatePickerDialog(root.getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                cal.set(year, monthOfYear, dayOfMonth);
+                new TimePickerDialog(root.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        cal.set(Calendar.MINUTE, minute);
+
+                        if(cal.compareTo(currentDate) >= 0) {
+                            date.setText(utils.calendarToString(cal));
+                        }
+                        else {
+                            Snackbar.make(root, "A data selecionada é anterior à atual!", Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+                    }
+                }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), false).show();
+            }
+        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
 }
 

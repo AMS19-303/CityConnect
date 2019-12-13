@@ -93,7 +93,6 @@ public class CatalogFragment extends Fragment {
 
         queue.add(categories_request);
 
-
         getStores(null);
 
         return root;
