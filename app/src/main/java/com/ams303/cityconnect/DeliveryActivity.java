@@ -69,6 +69,9 @@ public class DeliveryActivity extends AppCompatActivity {
 
     private Bundle savedState;
 
+    private final String list = "[{id:0, name:'Oita', type:'Croissanteria', photo:'https://i.ibb.co/vk3VfWb/oita.png', gps:[40.6430422, -8.6495785], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:1, name:'Ramona', type:'Hamburgueria', photo:'https://i.ibb.co/WNCvCQz/ramona.jpg', gps:[40.6381073, -8.6513571], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']},{id:2, name:'Ria Pão', type:'Padaria', photo:'https://i.ibb.co/RcYc5M5/riapao.png', gps:[40.64163, -8.6572227], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Doçes & Pastéis']},{id:4, name:'Mini Mercado Farol', type:'Mercearia', photo:'https://i.ibb.co/L55cWtz/mercearia.jpg', gps:[40.6422653, -8.656447], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos', 'Peixe', 'Doçes & Pastéis', 'Latícinios', 'Fruta & Legumes', 'Outros']}, {id:5, name:'Azuleto', type:'Sapataria', photo:'https://i.ibb.co/GQK1bG0/sapataria.jpg', gps:[40.6421325, -8.6513097], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Indumentária']}, {id:6, name:'Flor de Aveiro', type:'Talho', photo:'https://i.ibb.co/wK3jcZB/talho.jpg', gps:[40.6433839, -8.6506286], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Carne & Enchidos']}, {id:7, name:'Mar Aberto', type:'Peixaria', photo:'https://i.ibb.co/bXMmrpM/peixaria.png', gps:[40.6468266, -8.6437491], business_hours:[{open: \"10:30:00\", close: \"19:30:00\", day_of_week: 2}], categories: ['Peixe']}]";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,44 +164,48 @@ public class DeliveryActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Type listType = new TypeToken<ArrayList<Store>>() {
-                        }.getType();
-                        final List<Store> stores_lst = new Gson().fromJson(response, listType);
-
-                        mapView.onCreate(savedState);
-                        mapView.getMapAsync(new OnMapReadyCallback() {
-                            @Override
-                            public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-
-                                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                                    @Override
-                                    public void onStyleLoaded(@NonNull Style style) {
-
-                                        for(Store store : stores_lst) {
-                                            if (stores.contains(store.getId())){
-                                                mapboxMap.addMarker(new MarkerOptions()
-                                                        .position(new LatLng(store.getGps()[0], store.getGps()[1]))
-                                                        .title(store.getName()));
-                                            }
-                                        }
-
-                                        // Map is set up and the style has loaded. Now you can add data or make other map adjustments
-                                        mapboxMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(40.6405, -8.6538), 12.0f) );
-
-                                    }
-                                });
-
-                            }
-                        });
+                        populateMap(response, stores);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                return;
+                populateMap(list, stores);
             }
         });
 
         queue.add(stores_request);
+    }
+
+    public void populateMap(String str, final List<Integer> stores) {
+        Type listType = new TypeToken<ArrayList<Store>>() {
+        }.getType();
+        final List<Store> stores_lst = new Gson().fromJson(str, listType);
+
+        mapView.onCreate(savedState);
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+
+                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+
+                        for(Store store : stores_lst) {
+                            if (stores.contains(store.getId())){
+                                mapboxMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(store.getGps()[0], store.getGps()[1]))
+                                        .title(store.getName()));
+                            }
+                        }
+
+                        // Map is set up and the style has loaded. Now you can add data or make other map adjustments
+                        mapboxMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(40.6405, -8.6538), 12.0f) );
+
+                    }
+                });
+
+            }
+        });
     }
 }
 

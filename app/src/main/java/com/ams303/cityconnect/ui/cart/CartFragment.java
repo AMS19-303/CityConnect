@@ -36,11 +36,22 @@ import com.ams303.cityconnect.data.CartItem;
 import com.ams303.cityconnect.data.Product;
 import com.ams303.cityconnect.data.Request;
 import com.ams303.cityconnect.lib.utils;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
@@ -62,9 +73,14 @@ public class CartFragment extends Fragment {
     private Cart cart;
     private View root;
 
+    private RequestQueue queue;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_cart, container, false);
+
+        // Instantiate the RequestQueue.
+        queue = Volley.newRequestQueue(root.getContext());
 
         fillPage();
 
@@ -99,11 +115,42 @@ public class CartFragment extends Fragment {
         order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(final_root, "Encomenda agendada com sucesso!", Snackbar.LENGTH_SHORT)
-                        .show();
-                Cart.resetCart(final_root.getContext());
-                recyclerView.clearOnChildAttachStateChangeListeners();
-                fillPage();
+                String address_str = address.getText().toString();
+                String comment_str = comment.getText().toString();
+                String date_str = date.getText().toString();
+
+                if(address_str.length() == 0) {
+                    Snackbar.make(final_root, "O Campo 'Endereço de Entrega' é obrigatório!", Snackbar.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+
+                saveCart();
+
+                Log.d("DEBUG", new Gson().toJson(cart));
+
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                        getResources().getString(R.string.api_url) + "/order", cart.export(),
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d("JSONPost", response.toString());
+                                Snackbar.make(final_root, "Encomenda agendada com sucesso!", Snackbar.LENGTH_SHORT)
+                                        .show();
+                                Cart.resetCart(final_root.getContext());
+                                recyclerView.clearOnChildAttachStateChangeListeners();
+                                fillPage();
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("JSONPost", "Error: " + error.getMessage());
+                    }
+                });
+
+                queue.add(jsonObjReq);
             }
         });
 
@@ -157,9 +204,14 @@ public class CartFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        saveCart();
+    }
+
+    public void saveCart() {
         cart.setDeliveryDate(date.getText().toString());
         cart.setAddress(address.getText().toString());
         cart.setComment(comment.getText().toString());
+        cart.setTotalPrice(Double.parseDouble(price.getText().toString().substring(0, price.getText().toString().length() - 1)));
         cart.saveCart(root.getContext());
     }
 

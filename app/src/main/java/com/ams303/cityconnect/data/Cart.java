@@ -7,6 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,12 +21,14 @@ public class Cart {
     private String deliveryDate;
     private String address;
     private String comment;
+    private double totalPrice;
 
-    public Cart(List<CartItem> items, String deliveryDate, String address, String comment) {
+    public Cart(List<CartItem> items, String deliveryDate, String address, String comment, double totalPrice) {
         this.items = items;
         this.deliveryDate = deliveryDate;
         this.address = address;
         this.comment = comment;
+        this.totalPrice = totalPrice;
     }
 
     public List<CartItem> getItems() {
@@ -42,6 +47,10 @@ public class Cart {
         return comment;
     }
 
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
     public void setDeliveryDate(String deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
@@ -52,6 +61,10 @@ public class Cart {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public double getSubtotal() {
@@ -68,7 +81,7 @@ public class Cart {
         SharedPreferences sp = context.getSharedPreferences("CityConnect", MODE_PRIVATE);
         String result = sp.getString("cart", null);
 
-        if (result == null) return new Cart(new ArrayList<CartItem>(), null, "", "");
+        if (result == null) return new Cart(new ArrayList<CartItem>(), null, "", "", 0);
 
         Gson gson = new GsonBuilder().registerTypeAdapterFactory(runtimeTypeAdapterFactory).create();
         return gson.fromJson(result, Cart.class);
@@ -83,7 +96,7 @@ public class Cart {
     }
 
     public static void resetCart(Context context) {
-        new Cart(new ArrayList<CartItem>(), null, "", "").saveCart(context);
+        new Cart(new ArrayList<CartItem>(), null, "", "", 0).saveCart(context);
     }
 
     public static void addItem(Context context, CartItem item) {
@@ -100,6 +113,15 @@ public class Cart {
 
     public int getSize() {
         return items.size();
+    }
+
+    public JSONObject export(){
+        try {
+            return new JSONObject(new Gson().toJson(this));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static RuntimeTypeAdapterFactory<CartItem> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory

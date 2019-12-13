@@ -79,7 +79,7 @@ public class DeliveriesFragment extends Fragment {
     }
 
     public void getActiveItems(){
-        String endpoint = "/order?active=True";
+        String endpoint = "/order?active=true";
 
         StringRequest orders_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + endpoint,
                 new Response.Listener<String>() {
@@ -104,7 +104,7 @@ public class DeliveriesFragment extends Fragment {
     }
 
     public void getHistoryItems(){
-        String endpoint = "/order?active=False";
+        String endpoint = "/order?active=false";
 
         StringRequest orders_request = new StringRequest(Request.Method.GET, getResources().getString(R.string.api_url) + endpoint,
                 new Response.Listener<String>() {
